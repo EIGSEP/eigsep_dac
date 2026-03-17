@@ -1,3 +1,10 @@
+# /// script
+# requires-python = ">=3.14"
+# dependencies = [
+#     "matplotlib>=3.10.8",
+#     "numpy>=2.4.3",
+# ]
+# ///
 """
 gen_comb_waveforms.py
 ---------------------
@@ -183,22 +190,22 @@ print(f"  std   = {np.std(phase_diffs):.2e}°  (expect ~0)")
 #  Uncomment the block below to display a matplotlib figure showing the
 #  power spectrum of both polarisations.
 
-# import matplotlib.pyplot as plt
-#
-# freqs  = np.fft.rfftfreq(N_FFT, d=1/FS) / 1e6   # MHz
-# pwr1   = 20 * np.log10(np.abs(np.fft.rfft(pol1)) + 1e-12)
-# pwr2   = 20 * np.log10(np.abs(np.fft.rfft(pol2)) + 1e-12)
-#
-# fig, axes = plt.subplots(2, 1, figsize=(12, 6), sharex=True, sharey=True)
-# for ax, pwr, label, color in zip(
-#         axes, [pwr1, pwr2], ["Pol 1 (0°)", "Pol 2 (−90°)"], ["C0", "C1"]):
-#     ax.plot(freqs, pwr, lw=0.6, color=color)
-#     ax.axhline(np.max(pwr[comb_bins[comb_bins < len(freqs)]]) - 3,
-#                ls="--", lw=0.5, color="gray")
-#     ax.set_ylabel("Power [dBFS]")
-#     ax.set_title(label)
-#     ax.grid(True, lw=0.3)
-# axes[-1].set_xlabel("Frequency [MHz]")
-# plt.tight_layout()
-# plt.savefig("comb_spectrum.png", dpi=150)
-# plt.show()
+import matplotlib.pyplot as plt
+
+freqs  = np.fft.rfftfreq(N_FFT, d=1/FS) / 1e6   # MHz
+pwr1   = 20 * np.log10(np.abs(np.fft.rfft(pol1)) + 1e-12)
+pwr2   = 20 * np.log10(np.abs(np.fft.rfft(pol2)) + 1e-12)
+
+fig, axes = plt.subplots(2, 1, figsize=(12, 6), sharex=True, sharey=True)
+for ax, pwr, label, color in zip(
+        axes, [pwr1, pwr2], ["Pol 1 (0°)", "Pol 2 (−90°)"], ["C0", "C1"]):
+    ax.plot(freqs, pwr, lw=0.6, color=color)
+    ax.axhline(np.max(pwr[comb_bins[comb_bins < len(freqs)]]) - 3,
+               ls="--", lw=0.5, color="gray")
+    ax.set_ylabel("Power [dBFS]")
+    ax.set_title(label)
+    ax.grid(True, lw=0.3)
+axes[-1].set_xlabel("Frequency [MHz]")
+plt.tight_layout()
+plt.savefig("comb_spectrum.png", dpi=150)
+plt.show()
