@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eigsep-dac"
+version = "0.1.0"
+description = "RFSoC2x2 DAC programming and pseudorandom waveform generation"
+requires-python = ">=3.9"
+dependencies = [
+    "numpy",
+    "casperfpga",
+]
+
+[project.optional-dependencies]
+dev = ["matplotlib", "scipy", "jupyter"]
+
+[project.scripts]
+eigsep-dac-program = "eigsep_dac.program_board:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
