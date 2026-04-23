@@ -1,6 +1,4 @@
-import casperfpga
 import numpy as np
-from matplotlib import pyplot as plt
 import struct
 import time
 from argparse import ArgumentParser
@@ -8,6 +6,8 @@ from argparse import ArgumentParser
 FIXED_LEN = 30
 
 def Scope(darray):
+    from matplotlib import pyplot as plt
+
     try:
         plt.close('all')
     except:
@@ -77,6 +77,8 @@ def SpectraAnalyzer(data, fs=1000, show_bin=False):
     spec_shift = np.fft.fftshift(spec)
     freq = np.fft.fftfreq(N, 1/fs)
     freq_shift = np.fft.fftshift(freq)
+    from matplotlib import pyplot as plt
+
     try:
         plt.close('all')
     except:
@@ -111,6 +113,8 @@ def print_parameters(args):
     print('%s: %s'%('Single Bin'.ljust(FIXED_LEN), args.sbin))
 
 def main():
+    import casperfpga
+
     parser = ArgumentParser(description="Usage for Setting DAC on RFSoC2x2.")
     parser.add_argument('--ip',dest='ip', type=str, default='127.0.0.1',help='The IP address of the RFSoC2x2')
     parser.add_argument('--fpg',dest='fpg', type=str, default='firmware/rfsocdactut_2025-06-30_1113.fpg', help='The fpg file uploaded to the board.')
