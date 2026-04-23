@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eigsep-dac"
+version = "0.1.0"
+description = "RFSoC2x2 DAC programming and pseudorandom waveform generation"
+requires-python = ">=3.9"
+dependencies = [
+    "numpy",
+]
+# casperfpga is required at runtime by program_board.main() but is not on
+# PyPI (EIGSEP fork: github.com/EIGSEP/casperfpga). On field nodes it's
+# installed from pre-built aarch64 wheels staged in the eigsep-field
+# wheelhouse. Kept out of [dependencies] so dev installs and the waveform
+# module don't need it.
+
+[project.optional-dependencies]
+dev = ["matplotlib", "scipy", "jupyter"]
+
+[project.scripts]
+eigsep-dac-program = "eigsep_dac.program_board:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
