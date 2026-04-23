@@ -9,8 +9,12 @@ description = "RFSoC2x2 DAC programming and pseudorandom waveform generation"
 requires-python = ">=3.9"
 dependencies = [
     "numpy",
-    "casperfpga",
 ]
+# casperfpga is required at runtime by program_board.main() but is not on
+# PyPI (EIGSEP fork: github.com/EIGSEP/casperfpga). On field nodes it's
+# installed from pre-built aarch64 wheels staged in the eigsep-field
+# wheelhouse. Kept out of [dependencies] so dev installs and the waveform
+# module don't need it.
 
 [project.optional-dependencies]
 dev = ["matplotlib", "scipy", "jupyter"]
