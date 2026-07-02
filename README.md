@@ -77,6 +77,13 @@ Notes:
   `waveforms/interweave_dac_both_x3.npz` and `waveforms/circular.npz` both
   qualify. The single-channel `waveforms/transmitter.npz` does not.
 
+Every GitHub Release attaches `rfsoc_2026.tar.gz`
+(built by `scripts/make_rfsoc2026_bundle.sh`): the loader script, the
+2026 `.fpg`/`.dtbo` pair, and both dual-channel npz files. Unpacking it
+on the board reproduces the `rfsoc_2026/` layout above (minus the
+casperfpga checkout). The eigsep-field manifest pins this asset for
+field deployments.
+
 Everything in the on-board directory is tracked in this repo:
 
 | On the board (`rfsoc_2026/`)           | In this repo                            |
