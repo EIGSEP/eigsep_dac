@@ -15,7 +15,7 @@ def gen_flat_spectrum_waveform(N=64, band_fraction=2, seed=0):
     np.random.seed(seed)
     dM_tilda = np.exp(1j * np.random.uniform(0, 2 * np.pi, size=M))
     conj_dM = np.conjugate(dM_tilda)[::-1]
-    d_tilda[1:M + 1] = dM_tilda
+    d_tilda[1 : M + 1] = dM_tilda
     d_tilda[-M:] = conj_dM
     d = np.fft.ifft(d_tilda)
     return d.real

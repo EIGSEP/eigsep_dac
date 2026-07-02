@@ -50,7 +50,9 @@ def gen_comb_waveform(
     bins = bins[bins < nyquist]
 
     if bins.size == 0:
-        raise ValueError("No FFT bins selected. Check spacing, offset, fs, and fmax.")
+        raise ValueError(
+            "No FFT bins selected. Check spacing, offset, fs, and fmax."
+        )
 
     phases = rng.uniform(0, 2 * np.pi, size=bins.size)
 
@@ -89,7 +91,7 @@ def print_waveform_diagnostics(name, d_int, bins):
     tone_mags = np.abs(D[bins])
 
     print(f"{name} time peak        = {np.max(np.abs(d_int))}")
-    print(f"{name} time rms         = {np.sqrt(np.mean(d_float ** 2)):.3f}")
+    print(f"{name} time rms         = {np.sqrt(np.mean(d_float**2)):.3f}")
     print(f"{name} selected tones   = {len(bins)}")
     print(f"{name} first bins       = {bins[:8]}")
     print(f"{name} median |FFT bin| = {np.median(tone_mags):.3f}")
@@ -100,44 +102,87 @@ def print_waveform_diagnostics(name, d_int, bins):
 def main():
     p = ArgumentParser(description=__doc__)
 
-    p.add_argument("--seed0", type=int, default=816343,
-                   help="RNG seed for waveform 0")
-    p.add_argument("--seed1", type=int, default=816344,
-                   help="RNG seed for waveform 1")
-    p.add_argument("--N", type=int, default=256,
-                   help="Base samples per period")
-    p.add_argument("--T", type=int, default=16,
-                   help="Comb spacing in FFT channels")
+    p.add_argument(
+        "--seed0", type=int, default=816343, help="RNG seed for waveform 0"
+    )
+    p.add_argument(
+        "--seed1", type=int, default=816344, help="RNG seed for waveform 1"
+    )
+    p.add_argument(
+        "--N", type=int, default=256, help="Base samples per period"
+    )
+    p.add_argument(
+        "--T", type=int, default=16, help="Comb spacing in FFT channels"
+    )
 
-    p.add_argument("--nbits", type=int, default=14,
-                   help="Default quantization bits for both outputs")
-    p.add_argument("--scale", type=float, default=0.9,
-                   help="Default amplitude scale for both outputs")
+    p.add_argument(
+        "--nbits",
+        type=int,
+        default=14,
+        help="Default quantization bits for both outputs",
+    )
+    p.add_argument(
+        "--scale",
+        type=float,
+        default=0.9,
+        help="Default amplitude scale for both outputs",
+    )
 
-    p.add_argument("--nbits0", type=int, default=None,
-                   help="Quantization bits for waveform 0; defaults to --nbits")
-    p.add_argument("--nbits1", type=int, default=None,
-                   help="Quantization bits for waveform 1; defaults to --nbits")
-    p.add_argument("--scale0", type=float, default=None,
-                   help="Amplitude scale for waveform 0; defaults to --scale")
-    p.add_argument("--scale1", type=float, default=None,
-                   help="Amplitude scale for waveform 1; defaults to --scale")
+    p.add_argument(
+        "--nbits0",
+        type=int,
+        default=None,
+        help="Quantization bits for waveform 0; defaults to --nbits",
+    )
+    p.add_argument(
+        "--nbits1",
+        type=int,
+        default=None,
+        help="Quantization bits for waveform 1; defaults to --nbits",
+    )
+    p.add_argument(
+        "--scale0",
+        type=float,
+        default=None,
+        help="Amplitude scale for waveform 0; defaults to --scale",
+    )
+    p.add_argument(
+        "--scale1",
+        type=float,
+        default=None,
+        help="Amplitude scale for waveform 1; defaults to --scale",
+    )
 
-    p.add_argument("--fs", type=float, default=1000e6,
-                   help="Sample rate in Hz")
-    p.add_argument("--fmax", type=float, default=250e6,
-                   help="Maximum positive frequency in Hz")
-    p.add_argument("--include-dc", action="store_true",
-                   help="Include DC bin in whichever waveform has offset 0")
+    p.add_argument(
+        "--fs", type=float, default=1000e6, help="Sample rate in Hz"
+    )
+    p.add_argument(
+        "--fmax",
+        type=float,
+        default=250e6,
+        help="Maximum positive frequency in Hz",
+    )
+    p.add_argument(
+        "--include-dc",
+        action="store_true",
+        help="Include DC bin in whichever waveform has offset 0",
+    )
 
-    p.add_argument("--swap-combs", action="store_true",
-                   help="Swap comb assignment between waveform 0 and waveform 1")
+    p.add_argument(
+        "--swap-combs",
+        action="store_true",
+        help="Swap comb assignment between waveform 0 and waveform 1",
+    )
 
-    p.add_argument("--out", type=str,
-                   default="waveforms/transmitter_interleaved_swappable.npz",
-                   help="Output npz path")
-    p.add_argument("--plot", action="store_true",
-                   help="Show time-domain and FFT plots")
+    p.add_argument(
+        "--out",
+        type=str,
+        default="waveforms/transmitter_interleaved_swappable.npz",
+        help="Output npz path",
+    )
+    p.add_argument(
+        "--plot", action="store_true", help="Show time-domain and FFT plots"
+    )
 
     args = p.parse_args()
 
@@ -147,7 +192,9 @@ def main():
     scale1 = args.scale if args.scale1 is None else args.scale1
 
     if args.T % 2 != 0:
-        raise ValueError("T must be even. For every-8-channel interleaving, use T=16.")
+        raise ValueError(
+            "T must be even. For every-8-channel interleaving, use T=16."
+        )
 
     nsamp = args.N * args.T
 
@@ -193,7 +240,9 @@ def main():
     common_peak = max(np.max(np.abs(d0)), np.max(np.abs(d1)))
 
     if common_peak == 0:
-        raise ValueError("Generated empty waveform. Check spacing, offset, fs, and fmax.")
+        raise ValueError(
+            "Generated empty waveform. Check spacing, offset, fs, and fmax."
+        )
 
     d0 = d0 / common_peak
     d1 = d1 / common_peak
@@ -231,8 +280,12 @@ def main():
     print(f"samples_per_waveform={data.shape[1]}")
     print(f"max_addr={max_addr}")
     print(f"df={args.fs / nsamp / 1e6:.6f} MHz")
-    print(f"comb spacing={args.T} bins = {args.T * args.fs / nsamp / 1e6:.6f} MHz")
-    print(f"interleaved spacing={args.T // 2} bins = {(args.T // 2) * args.fs / nsamp / 1e6:.6f} MHz")
+    print(
+        f"comb spacing={args.T} bins = {args.T * args.fs / nsamp / 1e6:.6f} MHz"
+    )
+    print(
+        f"interleaved spacing={args.T // 2} bins = {(args.T // 2) * args.fs / nsamp / 1e6:.6f} MHz"
+    )
     print(f"swap_combs={args.swap_combs}")
     print(f"waveform 0 offset={offset0}")
     print(f"waveform 1 offset={offset1}")

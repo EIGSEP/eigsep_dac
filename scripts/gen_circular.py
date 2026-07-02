@@ -82,29 +82,52 @@ def quantize_waveform_shared(d, nbits=14, scale=0.9):
 
 def main():
     p = ArgumentParser(description=__doc__)
-    p.add_argument("--seed", type=int, default=816343,
-                   help="RNG seed")
-    p.add_argument("--N", type=int, default=256,
-                   help="Base samples per period")
-    p.add_argument("--T", type=int, default=16,
-                   help="Comb spacing in FFT channels")
-    p.add_argument("--nbits", type=int, default=14,
-                   help="Quantization bits")
-    p.add_argument("--scale", type=float, default=0.9,
-                   help="Amplitude scale after shared normalization")
-    p.add_argument("--fs", type=float, default=1000e6,
-                   help="Sample rate in Hz")
-    p.add_argument("--fmax", type=float, default=250e6,
-                   help="Maximum positive frequency in Hz")
-    p.add_argument("--include-dc", action="store_true",
-                   help="Include DC bin in waveform 0. Not recommended for quadrature.")
-    p.add_argument("--phase-sign", type=int, choices=[-1, 1], default=1,
-                   help="+1 for +90 degrees, -1 for -90 degrees")
-    p.add_argument("--out", type=str,
-                   default="waveforms/transmitter_quadrature.npz",
-                   help="Output npz path")
-    p.add_argument("--plot", action="store_true",
-                   help="Show time-domain, FFT, and phase-difference plots")
+    p.add_argument("--seed", type=int, default=816343, help="RNG seed")
+    p.add_argument(
+        "--N", type=int, default=256, help="Base samples per period"
+    )
+    p.add_argument(
+        "--T", type=int, default=16, help="Comb spacing in FFT channels"
+    )
+    p.add_argument("--nbits", type=int, default=14, help="Quantization bits")
+    p.add_argument(
+        "--scale",
+        type=float,
+        default=0.9,
+        help="Amplitude scale after shared normalization",
+    )
+    p.add_argument(
+        "--fs", type=float, default=1000e6, help="Sample rate in Hz"
+    )
+    p.add_argument(
+        "--fmax",
+        type=float,
+        default=250e6,
+        help="Maximum positive frequency in Hz",
+    )
+    p.add_argument(
+        "--include-dc",
+        action="store_true",
+        help="Include DC bin in waveform 0. Not recommended for quadrature.",
+    )
+    p.add_argument(
+        "--phase-sign",
+        type=int,
+        choices=[-1, 1],
+        default=1,
+        help="+1 for +90 degrees, -1 for -90 degrees",
+    )
+    p.add_argument(
+        "--out",
+        type=str,
+        default="waveforms/transmitter_quadrature.npz",
+        help="Output npz path",
+    )
+    p.add_argument(
+        "--plot",
+        action="store_true",
+        help="Show time-domain, FFT, and phase-difference plots",
+    )
     args = p.parse_args()
 
     nsamp = args.N * args.T
@@ -123,7 +146,9 @@ def main():
     common_peak = max(np.max(np.abs(d0)), np.max(np.abs(d1)))
 
     if common_peak == 0:
-        raise ValueError("Generated empty waveform. Check spacing, fs, and fmax.")
+        raise ValueError(
+            "Generated empty waveform. Check spacing, fs, and fmax."
+        )
 
     d0 = d0 / common_peak
     d1 = d1 / common_peak
@@ -154,7 +179,9 @@ def main():
     print(f"samples_per_waveform={data.shape[1]}")
     print(f"max_addr={max_addr}")
     print(f"df={args.fs / nsamp / 1e6:.6f} MHz")
-    print(f"comb spacing={args.T} bins = {args.T * args.fs / nsamp / 1e6:.6f} MHz")
+    print(
+        f"comb spacing={args.T} bins = {args.T * args.fs / nsamp / 1e6:.6f} MHz"
+    )
     print(f"phase shift={90 * args.phase_sign:+d} degrees")
     print(f"first comb bins: {bins[:8]}")
     print(f"last comb bins: {bins[-8:]}")

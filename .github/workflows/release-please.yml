@@ -1,0 +1,45 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: googleapis/release-please-action@v5
+        id: release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  build-artifacts:
+    # eigsep-dac is not published to PyPI: field nodes install from
+    # pre-built wheels staged in the eigsep-field wheelhouse (casperfpga,
+    # the runtime dependency, is not on PyPI either). Instead, attach the
+    # sdist and wheel to the GitHub Release so the wheelhouse can pull a
+    # versioned, immutable artifact via
+    # `gh release download <tag> --pattern '*.whl'`.
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
+      - uses: astral-sh/setup-uv@v8.2.0
+      - name: Build package
+        run: uv build
+      - name: Attach sdist and wheel to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload --clobber "${{ needs.release-please.outputs.tag_name }}" dist/*
