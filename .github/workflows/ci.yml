@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v8.2.0
+      - name: Lint with ruff
+        run: |
+          uvx ruff check .
+          uvx ruff format --check .
+
+  smoke:
+    # No test suite yet — this installs the package on every supported
+    # Python and exercises the waveform helpers. casperfpga is deliberately
+    # absent from the environment: importing eigsep_dac and program_board
+    # must keep working without it (it is lazy-imported inside
+    # program_board.main()).
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v8.2.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install package and exercise waveform helpers
+        run: |
+          uv run python - <<'EOF'
+          import eigsep_dac
+          from eigsep_dac import program_board  # noqa: F401
+
+          w = eigsep_dac.gen_flat_spectrum_waveform(N=64, seed=816343)
+          w_int = eigsep_dac.round_waveform(w, nbits=14)
+          tiled = eigsep_dac.tile_waveform(w_int, T=16)
+          assert tiled.shape == (1024,), tiled.shape
+          assert eigsep_dac.max_addr_calc(N=64, T=16) == 253
+          print("smoke OK")
+          EOF

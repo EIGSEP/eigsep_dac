@@ -17,14 +17,22 @@ from eigsep_dac.waveform import (
 
 def main():
     p = ArgumentParser(description=__doc__)
-    p.add_argument("--seed", type=int, default=816343,
-                   help="RNG seed (default reproduces transmitter.npz)")
+    p.add_argument(
+        "--seed",
+        type=int,
+        default=816343,
+        help="RNG seed (default reproduces transmitter.npz)",
+    )
     p.add_argument("--N", type=int, default=256, help="Samples per period")
     p.add_argument("--T", type=int, default=16, help="Tile count")
     p.add_argument("--nbits", type=int, default=14, help="Quantization bits")
     p.add_argument("--scale", type=float, default=0.9, help="Amplitude scale")
-    p.add_argument("--out", type=str, default="waveforms/transmitter.npz",
-                   help="Output npz path")
+    p.add_argument(
+        "--out",
+        type=str,
+        default="waveforms/transmitter.npz",
+        help="Output npz path",
+    )
     p.add_argument("--plot", action="store_true", help="Show time + FFT plots")
     args = p.parse_args()
 
@@ -38,6 +46,7 @@ def main():
 
     if args.plot:
         import matplotlib.pyplot as plt
+
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(10, 6))
         ax1.plot(d_repeat)
         ax1.set_title("Waveform (time)")

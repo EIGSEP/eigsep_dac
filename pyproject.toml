@@ -24,3 +24,18 @@ eigsep-dac-program = "eigsep_dac.program_board:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.ruff]
+line-length = 79
+# notebooks/ and the archive/ dirs are preserved as-is (see README layout);
+# lint only the live package and scripts.
+extend-exclude = ["notebooks", "scripts/archive", "build"]
+
+[tool.ruff.lint]
+extend-ignore = ["E203"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/*/__init__.py" = ["F401"]
+# dual_bram_mts_npz_loader.py must sys.path-insert the on-board casperfpga
+# checkout before importing it.
+"scripts/*.py" = ["E402"]

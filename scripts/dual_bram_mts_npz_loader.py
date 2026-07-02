@@ -97,7 +97,9 @@ def load_npz_pair(npz_path):
             )
 
         if data.ndim != 2:
-            raise ValueError("NPZ key 'data' must be 2D for two-channel loading.")
+            raise ValueError(
+                "NPZ key 'data' must be 2D for two-channel loading."
+            )
 
         if data.shape[0] == 2:
             data0 = data[0, :]
@@ -107,7 +109,8 @@ def load_npz_pair(npz_path):
             data1 = data[:, 1]
         else:
             raise ValueError(
-                "NPZ key 'data' must have shape (2, N) or (N, 2). Got %s." % (data.shape,)
+                "NPZ key 'data' must have shape (2, N) or (N, 2). Got %s."
+                % (data.shape,)
             )
 
     else:
@@ -238,8 +241,7 @@ def configure_once(args, attempt):
 
     if not mts_latencies_are_clean(lat0, lat1):
         raise RuntimeError(
-            "DAC MTS not clean: tile0=%s tile1=%s"
-            % (lat0, lat1)
+            "DAC MTS not clean: tile0=%s tile1=%s" % (lat0, lat1)
         )
 
     print_line("DAC MTS latency check", "passed")
@@ -324,8 +326,11 @@ def main():
     parser.add_argument("--ip", default="127.0.0.1")
     parser.add_argument("--fpg", required=True)
 
-    parser.add_argument("--npz", default=None,
-                        help="Optional NPZ waveform file. Use data0/data1 or data shape (2,N)/(N,2).")
+    parser.add_argument(
+        "--npz",
+        default=None,
+        help="Optional NPZ waveform file. Use data0/data1 or data shape (2,N)/(N,2).",
+    )
 
     parser.add_argument("--dac-fs", type=float, default=1000.0)
     parser.add_argument("--dac-len", type=int, default=32768)
@@ -350,7 +355,9 @@ def main():
     parser.add_argument("--lmk-index", type=int, default=1)
     parser.add_argument("--lmx-index", type=int, default=3)
 
-    parser.add_argument("--dac-mts-mask", type=lambda x: int(x, 0), default=0x3)
+    parser.add_argument(
+        "--dac-mts-mask", type=lambda x: int(x, 0), default=0x3
+    )
     parser.add_argument("--dac-mts-target-latency", type=int, default=-1)
     parser.add_argument("--max-fpga-reloads", type=int, default=5)
 
@@ -360,7 +367,9 @@ def main():
     parser.add_argument("--ctrl-delay", type=float, default=0.01)
 
     parser.add_argument("--once", action="store_true")
-    parser.add_argument("--force-state", choices=["0", "1", "none"], default="none")
+    parser.add_argument(
+        "--force-state", choices=["0", "1", "none"], default="none"
+    )
 
     args = parser.parse_args()
 
@@ -376,7 +385,9 @@ def main():
         pair_a = pair_npz
         pair_b = pair_npz
         print("*******************************************", flush=True)
-        print("NPZ mode: both select states load the same NPZ pair.", flush=True)
+        print(
+            "NPZ mode: both select states load the same NPZ pair.", flush=True
+        )
     else:
         pair_a = make_sine_pair(
             name="A",
@@ -408,7 +419,9 @@ def main():
             try:
                 state = read_select(rfsoc, args.select_reg)
             except Exception as e:
-                print("Error reading %s: %s" % (args.select_reg, e), flush=True)
+                print(
+                    "Error reading %s: %s" % (args.select_reg, e), flush=True
+                )
                 time.sleep(args.poll_sec)
                 continue
 
