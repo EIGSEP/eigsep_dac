@@ -39,7 +39,14 @@ jobs:
       - uses: astral-sh/setup-uv@v8.2.0
       - name: Build package
         run: uv build
-      - name: Attach sdist and wheel to release
+      - name: Build rfsoc_2026 field bundle
+        # Loader script + 2026 fpg/dtbo + dual-channel npz files in one
+        # tarball whose unpacked layout matches the on-board
+        # /home/eigsep/eigsep/rfsoc_2026 directory. eigsep-field's
+        # [firmware.rfsoc] manifest entry pulls this asset by name and
+        # pins its sha256.
+        run: ./scripts/make_rfsoc2026_bundle.sh dist/rfsoc_2026.tar.gz
+      - name: Attach sdist, wheel, and field bundle to release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release upload --clobber "${{ needs.release-please.outputs.tag_name }}" dist/*
